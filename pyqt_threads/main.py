@@ -58,6 +58,7 @@ class NetCom:
 
 class ReceiveThread(QThread):
     message_received = pyqtSignal(dict)
+    disconnected = pyqtSignal()
 
     def __init__(self, net):
         super().__init__()
@@ -65,10 +66,15 @@ class ReceiveThread(QThread):
 
     def run(self):
         while True:
-            message = self.net.recv()
-            if message is None:
+            try:
+                message = self.net.recv()
+                if message is None:
+                    self.disconnected.emit()
+                    break
+                self.message_received.emit(message)
+            except OSError:
+                self.disconnected.emit()
                 break
-            self.message_received.emit(message)
 
 
 class SendThread(QThread):
@@ -79,6 +85,10 @@ class SendThread(QThread):
 
     def send(self, message):
         self.queue.put(message)
+
+    def stop(self):
+        self.queue.put(None)
+        self.wait()
 
     def run(self):
         while True:
@@ -131,6 +141,7 @@ class MainWindow(QMainWindow):
 
         self.receive_thread = ReceiveThread(self.net)
         self.receive_thread.message_received.connect(self.handle_message)
+        self.receive_thread.disconnected.connect(self.on_disconnected)
         self.receive_thread.start()
 
         self.send_thread = SendThread(self.net)
@@ -165,6 +176,26 @@ class MainWindow(QMainWindow):
         elif message_type == "system":
             text = message.get("text", "")
             self.history.append(f"[Система] {text}")
+
+    def on_disconnected(self):
+        self.history.append("[Система] Соединение с сервером потеряно.")
+        self.send_button.setEnabled(False)
+        self.input.setEnabled(False)
+
+        self.status_label.setText("Disconnected")
+
+    def closeEvent(self, event):
+        self.send_thread.stop()
+
+        import socket
+        try:
+            self.net.sock.shutdown(socket.SHUT_RDWR)
+        except OSError:
+            pass
+
+        self.receive_thread.wait()
+
+        super().closeEvent(event)
 
 
 def main():
