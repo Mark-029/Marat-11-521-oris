@@ -103,16 +103,22 @@ class MainWindow(QMainWindow):
         self.input = QLineEdit()
         self.input.setPlaceholderText("Type a message…")
 
+        self.username_input = QLineEdit()
+        self.username_input.setPlaceholderText("Your name...")
+
         self.send_button = QPushButton("Send")
         self.status_label = QLabel("Connected to 127.0.0.1:50505")
+        self.clear_button = QPushButton("Clear history")
 
         input_row = QHBoxLayout()
+        input_row.addWidget(self.username_input)
         input_row.addWidget(self.input)
         input_row.addWidget(self.send_button)
 
         layout = QVBoxLayout()
         layout.addWidget(self.status_label)
         layout.addWidget(self.history)
+        layout.addWidget(self.clear_button)
         layout.addLayout(input_row)
 
         root = QWidget()
@@ -121,6 +127,7 @@ class MainWindow(QMainWindow):
 
         self.send_button.clicked.connect(self.on_send_clicked)
         self.input.returnPressed.connect(self.on_send_clicked)
+        self.clear_button.clicked.connect(self.on_clear_clicked)
 
         self.receive_thread = ReceiveThread(self.net)
         self.receive_thread.message_received.connect(self.handle_message)
@@ -134,17 +141,30 @@ class MainWindow(QMainWindow):
         if not text:
             return
 
+        username = self.username_input.text().strip() or "Гость"
+
         self.send_thread.send({
             "type": "chat",
+            "username": username,
             "text": text,
         })
 
         self.input.clear()
 
+    def on_clear_clicked(self):
+        self.history.clear()
+
     def handle_message(self, message):
-        if message.get("type") == "chat":
+        message_type = message.get("type")
+
+        if message_type == "chat":
+            username = message.get("username", "Неизвестный")
             text = message.get("text", "")
-            self.history.append(text)
+            self.history.append(f"{username}: {text}")
+
+        elif message_type == "system":
+            text = message.get("text", "")
+            self.history.append(f"[Система] {text}")
 
 
 def main():
