@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}
+Отзыв от {{ review.username }}
+{% endblock %}
+
+{% block content %}
+
+<h2>Отзыв от пользователя: {{ review.username }}</h2>
+<p>Оценка: {{ review.rating }}/5</p>
+<p>Комментарий: {{ review.comment }}</p>
+
+<a href="{{ url_for('index') }}">Назад</a>
+
+{% endblock %}

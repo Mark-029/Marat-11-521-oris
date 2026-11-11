@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}
+Главная — Отзывы
+{% endblock %}
+
+{% block content %}
+
+<h2>Все отзывы</h2>
+
+{% if reviews %}
+
+    {% for review in reviews %}
+        <div>
+            <h3>{{ review.username }} (Оценка: {{ review.rating }}/5)</h3>
+            <p>{{ review.comment }}</p>
+            <a href="{{ url_for('detail', review_id=review.id) }}">Подробнее</a>
+        </div>
+        <hr>
+    {% endfor %}
+
+{% else %}
+    <p>Пока отзывов нет.</p>
+{% endif %}
+
+{% endblock %}
