@@ -9,8 +9,15 @@
     <header>
         <h1>Каталог отзывов</h1>
         <nav>
-            <a href="{{ url_for('index') }}">Главная</a>
-            <a href="{{ url_for('add_review') }}">Оставить отзыв</a>
+            <form action="{{ url_for('index') }}" method="GET" style="display: inline;">
+                <button type="submit">Главная</button>
+            </form>
+            <form action="{{ url_for('add_review') }}" method="GET" style="display: inline;">
+                <button type="submit">Оставить отзыв</button>
+            </form>
+            <form action="{{ url_for('stats') }}" method="GET" style="display: inline;">
+                <button type="submit">Статистика</button>
+            </form>
         </nav>
     </header>
 

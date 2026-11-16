@@ -8,19 +8,34 @@
 
 <h2>Все отзывы</h2>
 
+<form method="GET" action="{{ url_for('index') }}" style="margin-bottom: 20px;">
+    <label>Фильтр по оценке:</label>
+    <select name="rating">
+        <option value="">Все оценки</option>
+        <option value="5" {% if current_filter == 5 %}selected{% endif %}>5</option>
+        <option value="4" {% if current_filter == 4 %}selected{% endif %}>4</option>
+        <option value="3" {% if current_filter == 3 %}selected{% endif %}>3</option>
+        <option value="2" {% if current_filter == 2 %}selected{% endif %}>2</option>
+        <option value="1" {% if current_filter == 1 %}selected{% endif %}>1</option>
+    </select>
+    <button type="submit">Применить</button>
+</form>
+
 {% if reviews %}
 
     {% for review in reviews %}
         <div>
             <h3>{{ review.username }} (Оценка: {{ review.rating }}/5)</h3>
             <p>{{ review.comment }}</p>
-            <a href="{{ url_for('detail', review_id=review.id) }}">Подробнее</a>
+            <form action="{{ url_for('detail', review_id=review.id) }}" method="GET" style="display: inline;">
+                <button type="submit">Подробнее</button>
+            </form>
         </div>
         <hr>
     {% endfor %}
 
 {% else %}
-    <p>Пока отзывов нет.</p>
+    <p>Отзывов с такой оценкой пока нет.</p>
 {% endif %}
 
 {% endblock %}

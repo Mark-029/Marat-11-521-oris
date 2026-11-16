@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}
+Статистика
+{% endblock %}
+
+{% block content %}
+
+<h2>Статистика отзывов</h2>
+
+<ul>
+    <li><strong>Всего отзывов:</strong> {{ total }}</li>
+    <li><strong>Средняя оценка:</strong> {{ avg }} из 5</li>
+    <li><strong>Отзывов с оценкой 5:</strong> {{ five_stars }}</li>
+</ul>
+
+<br>
+<form action="{{ url_for('index') }}" method="GET" style="display: inline;">
+    <button type="submit">На главную</button>
+</form>
+
+{% endblock %}

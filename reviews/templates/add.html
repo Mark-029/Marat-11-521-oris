@@ -9,7 +9,7 @@
 <h2>Новый отзыв</h2>
 
 {% for error in errors|default([]) %}
-    <p>{{ error }}</p>
+    <p style="color: red;">{{ error }}</p>
 {% endfor %}
 
 <form method="POST">
