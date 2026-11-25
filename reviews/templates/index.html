@@ -25,7 +25,7 @@
 
     {% for review in reviews %}
         <div>
-            <h3>{{ review.username }} (Оценка: {{ review.rating }}/5)</h3>
+            <h3>{{ review.place_name }} — {{ review.username }} (Оценка: {{ review.rating }}/5)</h3>
             <p>{{ review.comment }}</p>
             <form action="{{ url_for('detail', review_id=review.id) }}" method="GET" style="display: inline;">
                 <button type="submit">Подробнее</button>

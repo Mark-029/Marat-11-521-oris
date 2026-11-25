@@ -29,6 +29,17 @@
         <textarea name="comment">{{ comment }}</textarea>
     </p>
 
+    <p>
+        <label>Заведение</label><br>
+        <select name="place_id">
+            {% for place in places %}
+                <option value="{{ place.id }}" {% if place_id|string == place.id|string %}selected{% endif %}>
+                    {{ place.name }}
+                </option>
+            {% endfor %}
+        </select>
+    </p>
+
     <button type="submit">Сохранить изменения</button>
 
 </form>
